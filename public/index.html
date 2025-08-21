@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .counter {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: var(--tg-theme-button-color, #0088cc);
+        }
+        .button {
+            background-color: var(--tg-theme-button-color, #0088cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: opacity 0.2s;
+        }
+        .button:hover {
+            opacity: 0.8;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Telegram Web App</h1>
+        <div class="counter" id="counter">0</div>
+        <button class="button" onclick="increment()">+1</button>
+        <button class="button" onclick="decrement()">-1</button>
+        <button class="button" onclick="reset()">Reset</button>
+        
+        <div class="info">
+            <p>Count is stored in localStorage</p>
+            <p id="user-info">Loading user info...</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+
+        // Get counter element
+        const counterElement = document.getElementById('counter');
+        const userInfoElement = document.getElementById('user-info');
+
+        // Load count from localStorage
+        let count = parseInt(localStorage.getItem('count') || '0');
+        updateCounter();
+
+        // Display user info if available
+        if (tg.initDataUnsafe.user) {
+            const user = tg.initDataUnsafe.user;
+            userInfoElement.textContent = `Hello, ${user.first_name}!`;
+        } else {
+            userInfoElement.textContent = 'User info not available';
+        }
+
+        function updateCounter() {
+            counterElement.textContent = count;
+            localStorage.setItem('count', count.toString());
+        }
+
+        function increment() {
+            count++;
+            updateCounter();
+            // Haptic feedback
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function decrement() {
+            count--;
+            updateCounter();
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+
+        function reset() {
+            count = 0;
+            updateCounter();
+            tg.HapticFeedback.notificationOccurred('success');
+        }
+
+        // Expand the web app to full height
+        tg.expand();
+    </script>
+</body>
+</html>
