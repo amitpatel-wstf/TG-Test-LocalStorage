@@ -1,21 +1,39 @@
-import TelegramBot from "node-telegram-bot-api";
-import 'dotenv/config';
+import { Bot, InputFile } from "grammy";
+import "dotenv/config"
 
-const bot = new TelegramBot(process.env.BOT_TOKEN!, {polling: true});
+const bot = new Bot(process.env.BOT_TOKEN!);
 
-bot.on('message', (msg) => {
-    const chatId = msg.chat.id;
-    // send message with button with webapp url
-    const url = "https://68b17eb60f6d.ngrok-free.app"
-    console.log("Url => ",url)
-    bot.sendMessage(chatId, 'Hello!', {
+// bot.on('message', (msg) => {
+//     const chatId = msg.chat.id;
+//     // send message with button with webapp url
+//     const url = "https://68b17eb60f6d.ngrok-free.app"
+//     console.log("Url => ",url)
+//     bot.api.sendMessage(chatId, 'Hello!', {
+//         reply_markup: {
+//             inline_keyboard: [
+//                 [
+//                     {
+//                         text: 'Open Web App',
+//                         web_app: {
+//                             url:url
+//                         }
+//                     }
+//                 ]
+//             ]
+//         }
+//     });
+// });
+
+bot.command("start", (ctx) => {
+    ctx.reply("Hello!");
+    bot.api.sendDocument(ctx.chat.id, new InputFile("./public/index.html"), {
         reply_markup: {
             inline_keyboard: [
                 [
                     {
                         text: 'Open Web App',
                         web_app: {
-                            url:url
+                            url:"https://68b17eb60f6d.ngrok-free.app"
                         }
                     }
                 ]
@@ -24,11 +42,6 @@ bot.on('message', (msg) => {
     });
 });
 
-bot.onText(/\/start/, (msg) => {
-    const chatId = msg.chat.id;
-    bot.sendMessage(chatId, 'Hello!');
-});
-
-
+bot.start({ limit:100, timeout:30, onStart: () => console.log("Bot started") });
 
     
